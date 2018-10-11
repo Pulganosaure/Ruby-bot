@@ -1,12 +1,8 @@
 const Event = require('../models/EventModel.js')
+const User = require('../models/User.js')
 const Discord = require('discord.js')
 //check if a event is starting in the next 10 minutes
 module.exports = {
-
-  check_Event: async function(delay = 600000) {
-    const result = await Event.find()
-    console.log(result);
-  },
 
   check_NextEvent: async function(channel) {
     const newDate = new Date()
@@ -18,12 +14,26 @@ module.exports = {
 
   eventRender: function(message, details)
   {
+    let participants = []
+    details.participants.map(userID =>{
+      participants.push(get_username(userID))
+      console.log(participants)
+    })
+
     const embed = new Discord.RichEmbed()
     .setColor(0x00AE86)
     .addField(details.title, details.description)
     .addField("horaires :", "le: " + details.startDate.getDate() + "/" + details.startDate.getMonth() + "/" + details.startDate.getFullYear())
     .addBlankField(true)
-    .addField("participants",details.participants.join('\n') )
+    .addField("participants",participants.join('\n') )
     message.reply({embed})
   }
+}
+
+
+async function get_username(userID)
+{
+  const user = await User.findOne({_id: userID })
+  console.log("username:" +user.name)
+  return user.name
 }
