@@ -1,10 +1,11 @@
 const EventCommands = require('./commands/Event.js')
 const VoiceCommands = require ('./commands/Voice.js')
 const PresenceCommands = require('./commands/presence.js')
+const RiotApi = require('./commands/RiotApi.js')
 const HelpCommands = require('./commands/help.js')
 const server = require('./server.js')
 const Parser = require('rss-parser');
-
+//import axios from 'axios'
 
 const discordToken = require('./config').discordToken
 const commandRegex = /^![a-z]/
@@ -42,8 +43,9 @@ async function getRSSFlux(delay, url) {
 function check_command(request, message) {
   switch (request[0]) {
     case "!clear":
-    message.channel.fetchMessages({ limit: request[1]})
-    .then(res => res.map(message => message.delete()))
+    if(request[1] && !isNaN(request[1]))
+      message.channel.fetchMessages({ limit: 1 + request[1]})
+      .then(res => res.map(message => message.delete()))
     break;
     case "!events":
     EventCommands.displayEventList(message)
@@ -53,9 +55,15 @@ function check_command(request, message) {
     break;
     case "!gw2":
     message.reply("c'est buggé !")
-    break;
+    break
     case "!ael":
     message.reply("2 choses : le placement ! le placement ! le placement !")
+    break
+    case "!game":
+    if(request[1] && request[1] !== "")
+      RiotApi.getGameData(request[1], message)
+    else
+      message.reply("Invalid username : !game username")
     break;
     case "!play":
     if(request[1])
@@ -76,7 +84,7 @@ function check_command(request, message) {
       PresenceCommands.updatePresence(message, request, bot)
     break;
     case "!uptime":
-      message.reply(Math.floor((bot.uptime / 1000) / 3600*24) + " days " + Math.floor((bot.uptime / 1000) / 3600)+ " hours " + Math.floor(((bot.uptime / 1000) / 60) % 60) + " minutes " + Math.floor((bot.uptime / 1000) % 60) + " secondes")
+      message.reply(Math.floor((bot.uptime / 1000) / (3600*24)) + " days " + Math.floor((bot.uptime / 1000) / 3600)+ " hours " + Math.floor(((bot.uptime / 1000) / 60) % 60) + " minutes " + Math.floor((bot.uptime / 1000) % 60) + " secondes")
     break
     case "!help":
       HelpCommands.help(message)

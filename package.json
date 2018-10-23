@@ -4,6 +4,7 @@
   "description": "Small Discord bot, for my personal training",
   "main": "main.js",
   "dependencies": {
+    "axios": "^0.18.0",
     "discord.js": "^11.4.2",
     "ffmpeg": "0.0.4",
     "mongoose": "^5.3.1",

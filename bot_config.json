@@ -4,6 +4,6 @@
     "isplaying": false,
   },
   "RSSflux": [
-    {"name": "", "url": ""}
+    {"name": "", "url": "", "active": true}
   ]
 }

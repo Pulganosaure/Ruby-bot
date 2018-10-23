@@ -44,7 +44,7 @@ module.exports = {
     if(!isNaN(vol))
     {
       volume = vol
-      volume = (vol % 100 ) / 100
+      volume = ((vol % 100 ) / 100) / 2
       message.reply("volume set at " + (vol % 100 ) + "%")
     }
     else {
