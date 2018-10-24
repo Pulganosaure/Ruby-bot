@@ -8,6 +8,6 @@ module.exports = {
   mongoose
     .connect(db.mongo.url(), db.mongo.options)
     .then(() => console.log('Mongodb Connected'))
-    .catch(err => console.error(err))
+    .catch(err => console.error("connection to the mongoDB database impossible"))
   }
 };

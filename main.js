@@ -44,7 +44,7 @@ function check_command(request, message) {
   switch (request[0]) {
     case "!clear":
     if(request[1] && !isNaN(request[1]))
-      message.channel.fetchMessages({ limit: 1 + request[1]})
+      message.channel.fetchMessages({ limit: request[1]})
       .then(res => res.map(message => message.delete()))
     break;
     case "!events":
@@ -64,6 +64,15 @@ function check_command(request, message) {
       RiotApi.getGameData(request[1], message)
     else
       message.reply("Invalid username : !game username")
+    break;
+    case "!profil":
+    if(request[1] && request[1] !== "")
+      RiotApi.getSummonerProfil(request[1], message)
+    break;
+
+    case "!champion":
+    if(request[1] && request[1] !== "")
+      RiotApi.getChampionDetails(toTitleCase(request[1]), message)
     break;
     case "!play":
     if(request[1])
@@ -123,6 +132,12 @@ function check_ConnectedServers() {
   console.log("bot connected to :")
 
   console.log(server_list)
+}
+
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }
 
 bot.login(discordToken.token)
