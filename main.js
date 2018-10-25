@@ -5,15 +5,17 @@ const RiotApi = require('./commands/RiotApi.js')
 const HelpCommands = require('./commands/help.js')
 const server = require('./server.js')
 const Parser = require('rss-parser');
-//import axios from 'axios'
 
 const discordToken = require('./config').discordToken
 const commandRegex = /^![a-z]/
 const Discord = require('discord.js')
 const bot = new Discord.Client()
 
+var fs = require('fs');
+
+
 function checkRSSFlux() {
-  console.log("Flux Checker Initialized")
+  publishLog("ServiceInit", "bot", "Flux Checker Initialized")
   setInterval(function() {getRSSFlux(3, "https://www.guildwars2.com/fr/feed/")}, 3 * 60000)
   setInterval(function() {getRSSFlux(3, "https://en-forum.guildwars2.com/discussions/feed.rss")}, 3 * 60000)
   setInterval(function() {getRSSFlux(3, "https://fr-forum.guildwars2.com/discussions/feed.rss")}, 3 * 60000)
@@ -23,24 +25,32 @@ function postRSSEmbed(post) {
   bot.channels.get("501126898815074324").send(post.link)
 }
 
+function publishLog(event,  author, result)
+{
+  let dateFile = new Date()
+  let logObject = {date: dateFile.toISOString(), event: event, author: author, result: result}
+  fs.appendFile('./log.log', JSON.stringify(logObject) + "\n", function(err) { if(err) console.log(err)})
+
+}
+
 
 async function getRSSFlux(delay, url) {
   let parser = new Parser();
   let feed = await parser.parseURL(url);
-
+  let total = 0
   feed.items.map(entry => {
     let pub = new Date() - new Date(entry.pubDate)
     if((Math.round((new Date() - new Date(entry.pubDate)) / 60000)) < delay) {
-      console.log(Math.round(pub / 60000))
-      console.log(entry.pubDate)
+      total++
       postRSSEmbed(entry)
     }
   })
-  console.log("rss checked : " + url + " at " + new Date().toString())
+  publishLog("rsscheck", "bot", {url: url, newEntry: total})
 }
 
 
 function check_command(request, message) {
+  publishLog("command", message.author.username + "#" + message.author.discriminator, request.join(" "))
   switch (request[0]) {
     case "!clear":
     if(request[1] && !isNaN(request[1]))
@@ -109,6 +119,8 @@ bot.on('ready', function () {
   check_ConnectedServers()
   checkRSSFlux()
   console.log('All services Initialized')
+  publishLog("ServiceInit", "bot", 'All services Initialized')
+
 })
 
 bot.on('message', message => {
@@ -119,8 +131,7 @@ bot.on('message', message => {
 })
 
 bot.on("error", (err) => {
-  console.error(`An error occurred. The error was: ${err}.`)
-  console.log(err)
+  publishLog("Error", "bot", err)
 });
 
 
@@ -132,6 +143,8 @@ function check_ConnectedServers() {
   console.log("bot connected to :")
 
   console.log(server_list)
+  publishLog("ConnectedServers", "bot", server_list)
+
 }
 
 function toTitleCase(str) {
