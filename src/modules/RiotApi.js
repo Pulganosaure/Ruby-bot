@@ -6,12 +6,12 @@ module.exports = function(bot) {
   bot.riotAPI = {
     getGameData: async function(username, message) {
       const UserData = await getAccountDataByUsername(username, message);
-      if (!UserData) return true;
+      if (!UserData) return false;
       const GameData = await getGameDataByAccountId(UserData.id, message);
-      if (!GameData) return true;
+      if (!GameData) return false;
       RespondMessage(
         message,
-        GameInfoInArray(GameData.participants),
+        await GameInfoInArray(GameData.participants),
         getBanList(GameData.bannedChampions),
         username
       );
@@ -19,9 +19,10 @@ module.exports = function(bot) {
     getSummonerProfil: async function(username, message) {
       const profil = await getAccountDataByUsername(username, message);
       if (!profil) return true;
+
       const ranks = await axios
         .get(
-          `https://euw1.api.riotgames.com/lol/league/v3/positions/by-summoner/${
+          `https://euw1.api.riotgames.com/lol/league/v4/positions/by-summoner/${
             profil.id
           }?api_key=${ApiKey}`
         )
@@ -33,9 +34,10 @@ module.exports = function(bot) {
         .get(
           `http://ddragon.leagueoflegends.com/cdn/6.24.1/data/fr_FR/champion/${championName}.json`
         )
+        .catch(err => message.reply("Incorrect champion name"))
         .then(res => res.data);
-
-      ChampionRespond(message, champion.data[Object.keys(champion.data)[0]]);
+      if (champion)
+        ChampionRespond(message, champion.data[Object.keys(champion.data)[0]]);
     }
   };
 };
@@ -43,20 +45,21 @@ module.exports = function(bot) {
 async function getAccountDataByUsername(username, message) {
   const User = await axios
     .get(
-      `https://euw1.api.riotgames.com/lol/summoner/v3/summoners/by-name/${username}?api_key=${ApiKey}`
+      `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}?api_key=${ApiKey}`
     )
-    .catch(err => message.reply("User not found."));
+    .catch(err => message.reply("User not found"));
   return await User.data;
 }
 
 //Return the Game informations From the Riot API (require the account id of the player and the DevApi)
 async function getGameDataByAccountId(accountId, message) {
-  const User = await axios
+  const GameData = await axios
     .get(
-      `https://euw1.api.riotgames.com/lol/spectator/v3/active-games/by-summoner/${accountId}?api_key=${ApiKey}`
+      `https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${accountId}?api_key=${ApiKey}`
     )
     .catch(err => message.reply("Player isn't playing."));
-  return await User.data;
+
+  return await GameData.data;
 }
 
 function getBanList(bans) {
@@ -75,13 +78,12 @@ function getChampNameById(id) {
 
 //Generate the discord Embed for the reply
 async function RespondMessage(message, gameData, banlist, GivedplayerName) {
-  console.log(gameData);
   const embed = new Discord.RichEmbed()
     .setTitle("Game of " + GivedplayerName)
     .setColor(0x00ae86)
-    .addField("Player :", "**" + gameData.playerName.join("\n") + "**", true)
-    .addField("Champion :", gameData.champion.join("\n") + " ", true)
-    .addField("League", gameData.rank.join("\n") + "f", true)
+    .addField("Player :", "**" + gameData.summonerNames.join("\n") + "**", true)
+    .addField("Champion :", gameData.championIds.join("\n"), true)
+    .addField("League", gameData.ranks.join("\n"), true)
     .addBlankField(true)
     .addField("bans", banlist.join("\t"));
   message.reply({ embed });
@@ -105,7 +107,13 @@ function ProfilRespond(message, ProfilData, ranks) {
         ranks[i].rank +
         '\t\t"' +
         ranks[i].leagueName +
-        '"**'
+        '"** ' +
+        ranks[i].leaguePoints +
+        "lp \n\t " +
+        (ranks[i].wins + ranks[i].losses) +
+        " games (" +
+        ((ranks[i].wins / (ranks[i].wins + ranks[i].losses)) * 100).toFixed(0) +
+        "%)"
     );
   }
   message.reply({ embed });
@@ -127,23 +135,32 @@ function ChampionRespond(message, Champion) {
   message.reply({ embed });
 }
 
-function GameInfoInArray(players) {
-  GameInfo = { playerName: [], champion: [], rank: [] };
-  players.forEach(async function(player) {
-    const rank = await getRankinSolo(player.summonerId);
-    GameInfo.playerName.push(player.summonerName);
-    GameInfo.champion.push(player.championId);
-    GameInfo.rank.push(rank);
-  });
-  return GameInfo;
+async function GameInfoInArray(players) {
+  return await Promise.all(
+    players.map(async player => {
+      const summonerName = player.summonerName;
+      const championId = player.championId;
+      const rank = await getRankinSolo(player.summonerId);
+      return { summonerName, championId, rank };
+    })
+  ).then(results => transformresult(results));
 }
 
+function transformresult(result) {
+  newResults = { summonerNames: [], championIds: [], ranks: [] };
+  for (i = 0; i < result.length; i++) {
+    newResults.summonerNames.push(result[i].summonerName);
+    newResults.championIds.push(getChampNameById(result[i].championId));
+    newResults.ranks.push(result[i].rank);
+  }
+  return newResults;
+}
 //get the Rank List of the players
 async function getRanksListById(player) {
   const data = await Promise.all(
     player.map(async player => {
       const res = await axios.get(
-        `https://euw1.api.riotgames.com/lol/league/v3/positions/by-summoner/${
+        `https://euw1.api.riotgames.com/lol/league/v4/positions/by-summoner/${
           player.summonerId
         }?api_key=${ApiKey}`
       );
@@ -159,7 +176,7 @@ async function getRanksListById(player) {
 async function getRankinSolo(summonerId) {
   let solorank = " - ";
   const res = await axios.get(
-    `https://euw1.api.riotgames.com/lol/league/v3/positions/by-summoner/${summonerId}?api_key=${ApiKey}`
+    `https://euw1.api.riotgames.com/lol/league/v4/positions/by-summoner/${summonerId}?api_key=${ApiKey}`
   );
   ranks = res.data;
   for (let i = 0; i < ranks.length; i++) {

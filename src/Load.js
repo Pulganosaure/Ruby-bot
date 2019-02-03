@@ -8,10 +8,7 @@ const modules = __.map(fs.readdirSync("./src/modules"), mod =>
 );
 
 module.exports = function(bot, cfg) {
-  bot.dir = __dirname;
   bot.client = new Discord.Client();
   bot.bdd = MongoDB.connectToDataBase();
-  bot.audioFlux = {};
-  //config(bot, cfg);
   __.all(modules, mod => mod(bot));
 };

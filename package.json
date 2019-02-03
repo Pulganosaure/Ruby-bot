@@ -10,6 +10,7 @@
     "iterate-js": "^1.1.0",
     "mongoose": "^5.3.1",
     "mongoose-unique-validator": "^2.0.2",
+    "nodemon": "^1.18.9",
     "opusscript": "0.0.6",
     "rss-parser": "^3.5.2",
     "youtube-audio-stream": "^0.2.0"
@@ -17,7 +18,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node main.js",
+    "dev": "nodemon main.js"
   },
   "repository": {
     "type": "git",

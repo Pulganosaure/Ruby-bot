@@ -51,8 +51,8 @@ module.exports = function(bot) {
   async function GetPoiList(type) {
     console.log(type);
     //const PoiList = await Edpoi.find({ "category.name": type });
-    const PoiList = await Edpoi.find();
-    console.log(PoiList);
+    const poiList = await Edpoi.find();
+    console.log(poiList);
   }
 
   function findCloserSystem(systemList) {

@@ -4,10 +4,12 @@ module.exports = function(bot) {
   bot.admin = {
     check_ConnectedServers: message => {
       let server_list = [];
-      bot.guilds.map(server => {
+      bot.client.guilds.map(server => {
         server_list.push(server.name);
       });
-      message.reply(server_list.join("\t"));
+      message.reply(
+        "total :" + server_list.length + "\n" + server_list.join(", ")
+      );
     },
     disconnect: message => {
       message.reply("Stopping bot process...");

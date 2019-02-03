@@ -11,7 +11,7 @@ module.exports = function(bot) {
         )
         .addField(
           "Music :",
-          "!play :URL: play the youtube music in your channel. \n !volume :VOL: change the volume of the bot (0-100)."
+          "!add *url* : Adding the musique to the queue \n !play : play the queue \n !skip: skip the music \n !remove *value* : remove the music from the queue\n !clearqueue: clear the queue\n !volume :VOL: change the volume of the bot (0-100)."
         )
         .addField(
           "Bot :",

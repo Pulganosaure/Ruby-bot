@@ -12,22 +12,46 @@ module.exports = function(bot) {
     permcheck: message => {
       bot.client.channels.get("500415668890370048").send("!stop");
     },
-    vc: message => {
-      console.log(message.guild.voiceConnection);
-    },
-    vcs: message => {
-      console.log(message.guild.voiceConnection.speaking);
 
-      console.log(bot.audioflux);
+    state: message => {
+      bot.bgsMonitoring.StateInfo(message);
+    },
+    conflitReport: message => {
+      bot.bgsMonitoring.conflitReport(message);
+    },
+    bgsReport: message => {
+      bot.bgsMonitoring.getInfluences(message);
+    },
+    remove: message => {
+      bot.jukebox.remove(message);
+    },
+    clearqueue: message => {
+      bot.jukebox.clearQueue();
+      message.reply("queue cleared");
     },
     dc: message => {
       bot.client.channels.get(message.member.voiceChannelID).leave();
+      bot.jukebox.queue.queue = [];
+    },
+    bgs: message => {
+      bot.bgsMonitoring.checkBGS(message);
+    },
+    expansion: message => {
+      bot.bgsMonitoring.predictExpansion(message);
     },
     resume: message => {
-      bot.voice.resume(message);
+      bot.jukebox.resume(message);
+    },
+    queue: message => {
+      console.log(bot.jukebox.queue.queue);
+      if (bot.jukebox.queue.queue.length == 0) message.reply("queue is empty");
+      else
+        message.reply(
+          "\n<" + bot.jukebox.queue.queue.slice(0, 4).join(">\n<") + ">"
+        );
     },
     pause: message => {
-      bot.voice.pause(message);
+      bot.jukebox.pause(message);
     },
     events: message => {
       bot.event.displayEventList(message);
@@ -42,27 +66,28 @@ module.exports = function(bot) {
       message.reply("2 choses : le placement ! le placement ! le placement !");
     },
     game: message => {
-      if (message.args[0] && message.args[0] !== "")
-        bot.riotAPI.getGameData(message.args[0], message);
+      if (message.args[0])
+        bot.riotAPI.getGameData(message.args.join(" "), message);
       else message.reply("Invalid username : !game username");
     },
     profil: message => {
       if (message.args[0] && message.args[0] !== "")
-        bot.riotAPI.getSummonerProfil(message.args[0], message);
+        bot.riotAPI.getSummonerProfil(message.args.join(" "), message);
     },
 
     champion: message => {
       if (message.args && message.args[0] !== "")
-        bot.riotAPI.getChampionDetails(toTitleCase(message.args[0]), message);
+        bot.riotAPI.getChampionDetails(
+          toTitleCase(message.args.join(" ")),
+          message
+        );
     },
     play: message => {
-      console.log(message.command);
-
-      if (message.args) bot.voice.play(message);
+      if (message.args) bot.jukebox.play(message);
       else message.reply("merci de précisé un url valide");
     },
     volume: message => {
-      bot.voice.volume(message);
+      bot.jukebox.volume(message);
     },
     join: message => {
       bot.event.joinEventById(message, arguments);
@@ -72,6 +97,9 @@ module.exports = function(bot) {
     },
     presence: message => {
       bot.presence.updatePresence(message, arguments, bot);
+    },
+    skip: message => {
+      bot.jukebox.skip(message);
     },
     stop: message => {
       if (message.author.id == "173772645404377088")
@@ -83,9 +111,12 @@ module.exports = function(bot) {
         bot.admin.check_ConnectedServers(message);
       else message.reply("you don't have the permissions for this command");
     },
-    restart: message => {
-      if (message.author.id == "173772645404377088") bot.admin.restart(message);
-      else message.reply("you don't have the permissions for this command");
+    add: message => {
+      bot.jukebox.add(message);
+      message.reply(
+        "Musiques Added to the queue, new queue lenght : " +
+          bot.jukebox.queue.queue.length
+      );
     },
     uptime: message => {
       message.reply(
