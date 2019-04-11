@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const ApiKey = require("../../config.js").RiotApiKey;
+const ApiKey = process.env.RIOTAPIKEY || require("../../config.js").RiotApiKey;
 const axios = require("axios");
 const champs = require("../ressources/champions.js").champions;
 module.exports = function(bot) {

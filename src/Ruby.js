@@ -1,5 +1,6 @@
 const __ = require("iterate-js");
-const discordToken = require("../config").discordToken;
+const discordToken =
+  process.env.DISCORDTOKEN || require("../config").discordToken;
 
 const init = require("./load.js");
 
