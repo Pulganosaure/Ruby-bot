@@ -1,4 +1,4 @@
-const Ruby = require("./src/ruby.js");
+const Ruby = require("./src/ruby");
 
 const discordToken = require("./config").discordToken;
 const commandRegex = /^![a-z]\w+/;
