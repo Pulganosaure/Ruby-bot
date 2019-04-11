@@ -4,17 +4,23 @@ module.exports = function(bot) {
       if (message.args[0] && !isNaN(message.args[0]))
         message.channel
           .fetchMessages({ limit: message.args[0] })
-          .then(res => res.map(message => message.delete()));
+          .then(res =>
+            res.map(message =>
+              message.delete().catch(error => console.log(error))
+            )
+          );
     },
     find: message => {
       bot.findPOI(message.args[0], arguments[2], message);
     },
-    permcheck: message => {
-      bot.client.channels.get("500415668890370048").send("!stop");
+    kick: message => {
+      bot.moderation.kick(message);
     },
-
-    state: message => {
-      bot.bgsMonitoring.StateInfo(message);
+    ban: message => {
+      bot.moderation.ban(message);
+    },
+    mute: message => {
+      bot.moderation.mute(message);
     },
     conflitReport: message => {
       bot.bgsMonitoring.conflitReport(message);
@@ -58,12 +64,6 @@ module.exports = function(bot) {
     },
     event: message => {
       bot.event.displayEventDetails(message, arguments);
-    },
-    gw2: message => {
-      message.reply("c'est buggé !");
-    },
-    ael: message => {
-      message.reply("2 choses : le placement ! le placement ! le placement !");
     },
     game: message => {
       if (message.args[0])
@@ -129,6 +129,13 @@ module.exports = function(bot) {
           Math.floor((bot.client.uptime / 1000) % 60) +
           " secondes"
       );
+    },
+    regex: message => {
+      const commandRegex = /^![a-z]\w+/;
+      const spaceRemoving = /( +)/gi;
+      text = message.args.join(" ");
+      //message.reply(text);
+      message.reply(text.replace(spaceRemoving, " "));
     },
     help: message => {
       bot.help.helpMessage(message);
