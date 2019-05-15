@@ -2,7 +2,7 @@ const __ = require("iterate-js");
 const discordToken =
   process.env.DISCORDTOKEN || require("../config").discordToken;
 
-const init = require("./load.js");
+const init = require("./Load.js");
 
 module.exports = __.class(
   function(cfg) {
