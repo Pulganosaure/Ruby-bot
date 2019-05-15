@@ -1,4 +1,4 @@
-const discordToken = require("../../config").discordToken;
+//const discordToken = require("../../config").discordToken;
 
 module.exports = function(bot) {
   bot.admin = {
@@ -18,7 +18,7 @@ module.exports = function(bot) {
     restart: message => {
       message.reply("Restarting bot process...");
       bot.client.destroy();
-      bot.client.login(discordToken.token);
+      //bot.client.login(discordToken.token);
     }
   };
 };
