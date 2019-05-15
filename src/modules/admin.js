@@ -1,5 +1,4 @@
 //const discordToken = require("../../config").discordToken;
-
 module.exports = function(bot) {
   bot.admin = {
     check_ConnectedServers: message => {
