@@ -10,7 +10,7 @@ module.exports = __.class(
   },
   {
     connect: function() {
-      console.log(discordToken);
+      console.log(process.env.DISCORDTOKEN);
       return this.client.login(discordToken.token);
     },
     disconnect: function() {
