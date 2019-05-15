@@ -1,7 +1,7 @@
 const __ = require("iterate-js");
 const fs = require("fs");
 const Discord = require("discord.js");
-const MongoDB = require("../MongoDB.js");
+const MongoDB = require("../mongoDB.js");
 
 const modules = __.map(fs.readdirSync("./src/modules"), mod =>
   require(`./modules/${mod}`)
