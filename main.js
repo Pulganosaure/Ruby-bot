@@ -1,6 +1,5 @@
 const Ruby = require("./src/Ruby.js");
 
-const discordToken = require("./config").discordToken;
 const commandRegex = /^![a-z]\w+/;
 
 const bot = new Ruby();
