@@ -11,6 +11,7 @@ module.exports = function(bot) {
         result: result
       };
       console.log(logObject);
+      return;
       fs.appendFile("../../log.log", JSON.stringify(logObject) + "\n", function(
         err
       ) {
