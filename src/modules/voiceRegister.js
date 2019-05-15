@@ -1,4 +1,4 @@
-const discordToken = require("../../config").discordToken;
+//const discordToken = require("../../config").discordToken;
 const fs = require("fs");
 
 let voiceConnection;
@@ -32,8 +32,6 @@ module.exports = function(bot) {
     },
     VRStop: message => {
       message.reply("Stopped listening voice chat.");
-      bot.client.destroy();
-      bot.client.login(discordToken.token);
     }
   };
 };
