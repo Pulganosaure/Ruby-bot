@@ -1,10 +1,16 @@
-const Ruby = require("./src/ruby");
+const Ruby = require("./src/Ruby.js");
 
 const discordToken = require("./config").discordToken;
 const commandRegex = /^![a-z]\w+/;
+
 const bot = new Ruby();
 
 bot.connect();
+
+bot.client.on("raw", function(event) {
+  bot.eventLister.eventManager(event);
+});
+
 bot.client.on("ready", function() {
   console.log("All services Initialized");
   if (!bot.rss.readRSS) {
@@ -16,15 +22,21 @@ bot.client.on("ready", function() {
 
 bot.client.on("message", message => {
   if (commandRegex.exec(message.content)) {
-    text = message.content.split(" ");
-    message.command = text.shift().replace("!", "");
-    message.args = text.slice(0);
+    message.args = message.content.replace(/(\s)*(;)(\s)*/g, ";").split(";");
+    message.command = message.args[0]
+      .replace(/\s+/, " ")
+      .split(" ")
+      .shift()
+      .slice(1);
+    message.args[0] = message.args[0].replace(/^!([A-z])+\s+/, "");
     bot.logManager.publishLog(
       message.command,
       message.author.username + "#" + message.author.discriminator,
       message.content
     );
     try {
+      console.log(message.command);
+      console.log(message.args);
       cmd = bot.commands[message.command];
       if (isFunction(cmd)) {
         cmd(message);

@@ -10,8 +10,14 @@ module.exports = function(bot) {
             )
           );
     },
+    dupli: message => {
+      bot.duplication.clone(message);
+    },
     find: message => {
       bot.findPOI(message.args[0], arguments[2], message);
+    },
+    testa: message => {
+      bot.voiceRegister.VRstart(message);
     },
     kick: message => {
       bot.moderation.kick(message);
@@ -21,6 +27,9 @@ module.exports = function(bot) {
     },
     mute: message => {
       bot.moderation.mute(message);
+    },
+    unmute: message => {
+      bot.moderation.unmute(message);
     },
     conflitReport: message => {
       bot.bgsMonitoring.conflitReport(message);
@@ -82,6 +91,22 @@ module.exports = function(bot) {
           message
         );
     },
+
+    //RSS Commands
+    rssadd: message => {
+      bot.rss.add(message);
+    },
+    rsscount: message => {
+      bot.rss.countFlux(message);
+    },
+    rsslist: message => {
+      bot.rss.listRSS(message);
+    },
+    rssremove: message => {
+      bot.rss.remove();
+    },
+
+    // jukebox commands
     play: message => {
       if (message.args) bot.jukebox.play(message);
       else message.reply("merci de précisé un url valide");
@@ -106,6 +131,8 @@ module.exports = function(bot) {
         bot.admin.disconnect(message);
       else message.reply("you don't have the permissions for this command");
     },
+
+    //admin server
     servers: message => {
       if (message.author.id == "173772645404377088")
         bot.admin.check_ConnectedServers(message);
@@ -131,11 +158,7 @@ module.exports = function(bot) {
       );
     },
     regex: message => {
-      const commandRegex = /^![a-z]\w+/;
-      const spaceRemoving = /( +)/gi;
-      text = message.args.join(" ");
-      //message.reply(text);
-      message.reply(text.replace(spaceRemoving, " "));
+      //empty
     },
     help: message => {
       bot.help.helpMessage(message);

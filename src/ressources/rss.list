@@ -1,0 +1,5 @@
+[{"timer":3,"url":"https://www.guildwars2.com/fr/feed/","name":"frPatchNoteGW2"},
+  {"timer":3,"url":"https://en-forum.guildwars2.com/discussions/feed.rss","name":"enForumGW2"},
+  {"timer":3,"url":"https://fr-forum.guildwars2.com/discussions/feed.rss","name":"frForumGW2"},
+  {"name":"galnetFR","url":"http://proxy.gonegeeky.com/edproxy-fr/","timer":"2"}
+]
