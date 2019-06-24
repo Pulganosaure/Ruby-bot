@@ -1,9 +1,0 @@
-{
-  "stream": {
-    "volume": 0.1,
-    "isplaying": false,
-  },
-  "RSSflux": [
-    {"name": "", "url": "", "active": true}
-  ]
-}

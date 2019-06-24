@@ -1,34 +1,22 @@
 {
-  "name": "discordBot",
+  "name": "ruby",
   "version": "1.0.0",
-  "description": "Small Discord bot, for my personal training",
-  "main": "main.js",
+  "description": "Ruby Discord bot v2.0",
+  "main": "App.js",
   "dependencies": {
-    "axios": "^0.18.0",
-    "discord.js": "^11.4.2",
-    "ffmpeg": "0.0.4",
-    "iterate-js": "^1.1.0",
-    "mongoose": "^5.3.1",
-    "mongoose-unique-validator": "^2.0.2",
-    "nodemon": "^1.18.9",
-    "opusscript": "0.0.6",
-    "rss-parser": "^3.5.2",
-    "youtube-audio-stream": "^0.2.0"
+    "discord.js": "^11.5.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js",
-    "dev": "nodemon main.js"
+    "test": "node App.js",
+    "dev": "nodemon App.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sc-pulgan/Discordbot.git"
-  },
+  "keywords": [
+    "ruby",
+    "discord",
+    "bot",
+    "js"
+  ],
   "author": "pulgan",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sc-pulgan/Discordbot/issues"
-  },
-  "homepage": "https://github.com/sc-pulgan/Discordbot#readme"
+  "license": "ISC"
 }
