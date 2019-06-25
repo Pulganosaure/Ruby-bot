@@ -11,6 +11,9 @@ module.exports = {
           Math.floor((bot.client.uptime / 1000) % 60) +
           " secondes"
       );
+    },
+    modulelist: message => {
+      message.reply("\n- " + Object.keys(bot).join("\n- "));
     }
   },
   functions: {
@@ -19,7 +22,7 @@ module.exports = {
       console.log(message.content);
       return message.content.startsWith(bot.config.commandPrefix);
     },
-    iGuildOwner: message => {
+    isGuildOwner: message => {
       return message.author.id == message.guild.ownerID;
     },
     isBotOwner: message => {

@@ -1,26 +1,19 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 
-bot = {};
-bot.commands = {};
-bot.config = {};
-initBot(bot);
-initModule(bot);
+bot = { commands: {}, config: {} };
+initBot();
+initModule();
 
 bot.client.auth.connect();
 
-bot.client.on("ready", () => console.log("bot ready"));
+bot.client.on("ready", () => {
+  bot.logManager.publishLog("start", "bot", "bot ready", true);
+});
 
 bot.client.on("message", message => {
   if (bot.utils.isACommand(message)) {
-    message.reply("command detected");
-    message.args = message.content.replace(/(\s)*(;)(\s)*/g, ";").split(";");
-    message.command = message.args[0]
-      .replace(/\s+/, " ")
-      .split(" ")
-      .shift()
-      .slice(1);
-    message.args[0] = message.args[0].replace(/^!([A-z])+\s+/, "");
+    message = bot.utils.parseCommand(message);
     try {
       cmd = bot.commands[message.command.toLowerCase()];
       if (isFunction(cmd)) {
@@ -29,7 +22,12 @@ bot.client.on("message", message => {
         message.reply("command not found, check the command list with `!help`");
       }
     } catch (err) {
-      console.log(err);
+      bot.logManager.publishLog(
+        "exec command",
+        message.author.username,
+        err,
+        true
+      );
     }
   }
 });
@@ -48,17 +46,13 @@ function initModule() {
       }
     });
   } catch (error) {
-    writeLog("Module Initialisation", "Bot", "failed", error);
+    bot.logManager.publishLog("Module Initialisation", "Bot", error, false);
     throw error;
   }
 }
 
 function validModule(module) {
   return module.commands && module.functions;
-}
-
-function writeLog(command, user, result, error = "none") {
-  console.log(command + ";" + user + ";" + result + ";" + error);
 }
 
 function isFunction(functionToCheck) {
