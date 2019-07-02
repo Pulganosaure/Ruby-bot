@@ -1,8 +1,6 @@
 module.exports = {
   connect: function() {
-    return bot.client.login(
-      "NDk1MjAyOTg4MTU2MTI1MTg0.Do-pbQ.jqkHeVDG8plKsmSAGtVbfCvs0Z0"
-    );
+    return bot.client.login(require("../config.js").tokens.discordToken);
   },
   disconnect: function() {
     return bot.client.destroy();

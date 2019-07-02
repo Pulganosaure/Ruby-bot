@@ -1,0 +1,7 @@
+{
+  "flux": [
+    { "name": "test", "url": "test.com" },
+    { "name": "test", "url": "test.com" }
+  ],
+  "config": { "frequency": 10000 }
+}

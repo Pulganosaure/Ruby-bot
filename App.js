@@ -5,10 +5,23 @@ bot = { commands: {}, config: {} };
 initBot();
 initModule();
 
-bot.client.auth.connect();
+try {
+  bot.client.auth.connect();
+} catch (error) {
+  throw error;
+}
+
+bot.client.on("error", error => {
+  bot.logManager.publishLog("error", "bot", error, false);
+});
 
 bot.client.on("ready", () => {
-  bot.logManager.publishLog("start", "bot", "bot ready", true);
+  //console.log(bot.client.options);
+  if (!process.arvO == false)
+    bot.logManager.publishLog("start", "bot", "bot ready", true);
+  console.log(
+    Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100
+  );
 });
 
 bot.client.on("message", message => {
@@ -36,8 +49,10 @@ function initBot() {
   bot.client = new Discord.Client();
   bot.client.auth = require("./src/auth.js");
 }
+
 function initModule() {
   try {
+    bot.config = require("./config.js").config;
     fs.readdirSync("./src/modules").map(mod => {
       module = require(`./src/modules/${mod}`);
       if (validModule(module)) {
@@ -46,7 +61,8 @@ function initModule() {
       }
     });
   } catch (error) {
-    bot.logManager.publishLog("Module Initialisation", "Bot", error, false);
+    console.log(bot.logManager);
+    //bot.logManager.publishLog("Module Initialisation", "Bot", error, false);
     throw error;
   }
 }

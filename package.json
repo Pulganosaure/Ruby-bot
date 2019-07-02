@@ -10,7 +10,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "node App.js",
-    "dev": "nodemon App.js"
+    "dev": "nodemon App.js false"
   },
   "keywords": [
     "ruby",
